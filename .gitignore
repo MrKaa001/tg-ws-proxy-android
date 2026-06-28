@@ -16,3 +16,6 @@ keystore.properties
 # Fetched upstream proxy code — NOT vendored (mirrors the HA add-on philosophy).
 # Pulled at build prep by tools/fetch_upstream.* from Flowseal/tg-ws-proxy@<pinned SHA>.
 /app/src/main/python/proxy/
+
+# Pre-fetched Chaquopy native wheels (workaround for chaquo.com throttling). Binary, not vendored.
+/wheels/

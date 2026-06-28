@@ -54,6 +54,11 @@ If `buildPython` isn't auto-detected, set it in `app/build.gradle` under
 # 1. Pull the upstream proxy code (not vendored):
 pwsh tools/fetch_upstream.ps1      # or: bash tools/fetch_upstream.sh
 
+# 1b. Pre-fetch the Chaquopy native wheels into wheels/ (git-ignored). Chaquopy's pip
+#     pulls these from chaquo.com, which is DPI-throttled on some networks — this grinds
+#     them down in small byte-ranges so the build doesn't choke on a reset connection:
+bash tools/fetch_wheels.sh
+
 # 2. Build the debug APK:
 ./gradlew assembleDebug
 

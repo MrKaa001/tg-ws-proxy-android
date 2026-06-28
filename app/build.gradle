@@ -16,9 +16,9 @@ android {
         versionName "0.1.0"
 
         ndk {
-            // Only ship ABIs Chaquopy has prebuilt wheels for that we actually need:
-            // arm64-v8a = real phones, x86_64 = emulator. Drop the rest to shrink the APK.
-            abiFilters "arm64-v8a", "x86_64"
+            // Real phones only. x86_64 (emulator) dropped so we don't need a 2nd set of
+            // native wheels — add it back (+ its wheels in wheels/) if emulator testing is needed.
+            abiFilters "arm64-v8a"
         }
 
         // Chaquopy: embed CPython + the upstream proxy + cryptography (prebuilt wheel).
@@ -32,7 +32,13 @@ android {
             pip {
                 // AES-CTR for MTProto. Upstream has a ctypes/libcrypto fallback, but
                 // Android has no loadable libcrypto.so by name, so the wheel is required.
-                install "cryptography"
+                // Pinned to the versions Chaquopy ships for cp311/arm64.
+                install "cryptography==42.0.8"
+                install "cffi==1.17.1"
+                // chaquo.com throttles large wheel bodies from here (DPI), so the native
+                // wheels are pre-fetched (chunked) into wheels/ and served via --find-links.
+                // Small index metadata still loads fine from the normal indexes.
+                options "--find-links", "${rootDir}/wheels", "--timeout", "180", "--retries", "10"
             }
         }
     }
