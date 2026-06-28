@@ -35,12 +35,30 @@ class ProxyService : android.app.Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == ACTION_STOP) {
+            setAutoStart(this, false)
             stopProxy()
             return START_NOT_STICKY
         }
 
-        val secret = intent?.getStringExtra(EXTRA_SECRET).orEmpty()
+        // Promote on every entry — Android requires startForeground() within ~5 s of any
+        // service start, including the system-initiated sticky restart (null intent).
         startForegroundCompat()
+
+        // Null intent = the system re-created us after process death (START_STICKY) or a
+        // boot trampoline. Honour the user's last choice: if they'd stopped the proxy
+        // (e.g. a hard-teardown left the service "started"), fold back down, don't revive.
+        if (intent == null && !shouldAutoStart(this)) {
+            finishStop(hard = false)
+            return START_NOT_STICKY
+        }
+
+        // Explicit start persists the intent so reboot / death can bring us back.
+        if (intent != null) setAutoStart(this, true)
+
+        // A sticky restart drops the extras, so fall back to the persisted secret —
+        // otherwise upstream would generate a fresh one that no longer matches the link.
+        val secret = intent?.getStringExtra(EXTRA_SECRET)?.takeIf { it.isNotEmpty() }
+            ?: SecretStore.getOrCreate(this)
 
         if (worker == null) {
             worker = Thread { runProxy(secret) }.apply {
@@ -199,6 +217,16 @@ class ProxyService : android.app.Service() {
         private const val TAG = "ProxyService"
         const val ACTION_STOP = "com.mrkaa.tgwsproxy.STOP"
         const val EXTRA_SECRET = "secret"
+
+        /** Did the user have the proxy running? Consulted by BootReceiver + sticky restart. */
+        fun shouldAutoStart(ctx: Context): Boolean =
+            ctx.getSharedPreferences(Const.PREFS, Context.MODE_PRIVATE)
+                .getBoolean(Const.KEY_AUTOSTART, false)
+
+        fun setAutoStart(ctx: Context, value: Boolean) {
+            ctx.getSharedPreferences(Const.PREFS, Context.MODE_PRIVATE)
+                .edit().putBoolean(Const.KEY_AUTOSTART, value).apply()
+        }
 
         fun ensureChannel(ctx: Context) {
             val nm = ctx.getSystemService(NotificationManager::class.java)

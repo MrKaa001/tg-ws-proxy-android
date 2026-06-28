@@ -7,6 +7,8 @@ object Const {
 
     const val PREFS = "tgwsproxy"
     const val KEY_SECRET = "secret"
+    /** Persisted "user wants the proxy running" intent — drives reboot/death auto-restart. */
+    const val KEY_AUTOSTART = "auto_start"
 
     const val NOTIF_CHANNEL = "proxy"
     const val NOTIF_ID = 1

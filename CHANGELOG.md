@@ -22,6 +22,10 @@ on-device (Chaquopy / embedded CPython 3.11), listening on loopback only.
   timeout backstop.
 - "Encrypted Signal" UI redesign — Material 3 dark marine theme, status-hero card with a
   state-tinted signal indicator + loopback endpoint readout, carded secret/link sections.
+- "Always on" — the proxy survives reboots and process death. A persisted `auto_start`
+  intent flag (set on Start, cleared on Stop) gates a `BootReceiver` (`BOOT_COMPLETED` +
+  `MY_PACKAGE_REPLACED`, so it also comes back after an over-the-top update) and the
+  existing `START_STICKY` restart. A deliberate Stop stays stopped across reboots.
 - Release signing — `signingConfigs.release` reads secrets from `keystore.properties`
   (gitignored; `keystore.properties.example` committed as a stub), so `assembleRelease`
   produces a signed APK that installs over future updates on the same key. R8 minify +
@@ -33,6 +37,11 @@ on-device (Chaquopy / embedded CPython 3.11), listening on loopback only.
 ### Changed
 - Status is now derived from real probes, not an optimistic local flag.
 - Build targets arm64-v8a only (x86_64 dropped to shrink the APK / avoid a 2nd wheel set).
+
+### Fixed
+- Sticky restart (null intent after process death) no longer drops the user's secret and
+  lets upstream generate a mismatched one — it now falls back to the persisted secret, so
+  the existing `tg://proxy?…secret=…` link keeps working after a restart.
 
 ### Notes
 - Graceful-stop loop unwinding verified by build only; confirm on-device.
