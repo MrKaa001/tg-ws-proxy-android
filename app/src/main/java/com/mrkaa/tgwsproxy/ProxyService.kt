@@ -8,7 +8,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.chaquo.python.PyException
@@ -19,14 +21,15 @@ import com.chaquo.python.android.AndroidPlatform
  * Foreground service that runs the embedded Python proxy.
  *
  * The proxy's asyncio loop is blocking, so it runs on a dedicated daemon thread.
- * Stopping it cleanly from outside asyncio is non-trivial (the upstream script
- * owns its own loop), so for now STOP tears the whole process down — crude but
- * reliable. A graceful-shutdown hook into the upstream loop is a later milestone.
+ * Stop signals upstream's stop_event (via proxy_entry.stop()) so the loop unwinds
+ * cleanly and the process survives; a hard process teardown remains only as a
+ * timeout backstop if the loop refuses to unwind. See proxy_entry.py for the bridge.
  */
 class ProxyService : android.app.Service() {
 
     @Volatile private var worker: Thread? = null
     @Volatile private var monitor: Thread? = null
+    private val main = Handler(Looper.getMainLooper())
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -97,14 +100,57 @@ class ProxyService : android.app.Service() {
         }
     }
 
+    /**
+     * Ask the embedded proxy to unwind its asyncio loop cleanly (close the listener,
+     * cancel clients) and only then drop the foreground service — the process stays
+     * alive, so the UI no longer vanishes on Stop. If upstream doesn't unwind within
+     * the grace window we fall back to the old hard teardown so Stop is never stuck.
+     */
     private fun stopProxy() {
-        Log.i(TAG, "stopping proxy (process teardown)")
-        monitor?.interrupt()
-        monitor = null
-        stopForeground(STOP_FOREGROUND_REMOVE)
-        stopSelf()
-        // Ensure the asyncio loop / sockets actually die.
-        android.os.Process.killProcess(android.os.Process.myPid())
+        Log.i(TAG, "stopping proxy (graceful)")
+        val w = worker
+        Thread {
+            // Nothing actually running — just drop the service.
+            if (w == null || !Python.isStarted()) {
+                finishStop(hard = false)
+                return@Thread
+            }
+            var graceful = false
+            try {
+                val signalled = Python.getInstance()
+                    .getModule("proxy_entry").callAttr("stop").toBoolean()
+                if (signalled) {
+                    w.join(Const.STOP_GRACE_MS)
+                    graceful = !w.isAlive
+                }
+            } catch (e: Throwable) {
+                Log.e(TAG, "graceful stop failed", e)
+            }
+            monitor?.interrupt()
+            monitor = null
+            worker = null
+            if (graceful) {
+                Log.i(TAG, "proxy stopped gracefully")
+                finishStop(hard = false)
+            } else {
+                Log.w(TAG, "graceful stop timed out — hard teardown")
+                finishStop(hard = true)
+            }
+        }.apply { isDaemon = true; name = "proxy-stop"; start() }
+    }
+
+    private fun finishStop(hard: Boolean) {
+        if (hard) {
+            // Backstop: the asyncio loop didn't unwind; kill the process so the
+            // listener and sockets can't linger.
+            stopForeground(STOP_FOREGROUND_REMOVE)
+            android.os.Process.killProcess(android.os.Process.myPid())
+            return
+        }
+        main.post {
+            stopForeground(STOP_FOREGROUND_REMOVE)
+            stopSelf()
+        }
     }
 
     private fun startForegroundCompat() {

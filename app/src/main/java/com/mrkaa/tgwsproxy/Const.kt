@@ -15,6 +15,8 @@ object Const {
     const val HEARTBEAT_MS = 2000L
     /** Socket-connect timeout for a single liveness probe (loopback → very short). */
     const val HEALTH_TIMEOUT_MS = 700
+    /** How long to wait for the upstream loop to unwind on Stop before a hard teardown. */
+    const val STOP_GRACE_MS = 4000L
 
     /** MTProto "secure mode" marker the connect link expects in front of the raw hex secret. */
     const val LINK_SECRET_PREFIX = "dd"

@@ -109,8 +109,8 @@ class MainActivity : AppCompatActivity() {
         startService(i)
         userWantsRunning = false
         renderHealth(false)
-        // NOTE: stop currently tears the process down (see ProxyService) — the
-        // activity may be recreated; that's expected for milestone 1.
+        // Stop now unwinds the proxy loop gracefully (see ProxyService), so the process
+        // and this activity survive; the heartbeat will confirm the socket going down.
     }
 
     /** Manual one-shot probe with a latency readout — the "check" button. */

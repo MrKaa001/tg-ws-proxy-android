@@ -77,10 +77,11 @@ Before polishing UI, confirm on a real phone:
 
 ## Known limitations (v0.1.0)
 
-- **Stop tears the process down** — the upstream owns its own asyncio loop; a graceful
-  in-loop shutdown hook is a later milestone.
-- ABIs shipped: `arm64-v8a` (phones), `x86_64` (emulator). Add `armeabi-v7a` for very old devices.
+- ABIs shipped: `arm64-v8a` only (real phones). Add `x86_64` (emulator) / `armeabi-v7a`
+  (very old devices) back in `app/build.gradle` + their wheels in `wheels/` if needed.
 - `dc_ips` uses upstream defaults (not exposed in UI yet).
+
+See [BACKLOG.md](BACKLOG.md) for what's planned next.
 
 ## License
 
