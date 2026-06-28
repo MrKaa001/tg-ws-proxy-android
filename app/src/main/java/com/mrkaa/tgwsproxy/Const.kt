@@ -11,6 +11,11 @@ object Const {
     const val NOTIF_CHANNEL = "proxy"
     const val NOTIF_ID = 1
 
+    /** How often the in-app heartbeat and the service monitor re-probe the proxy. */
+    const val HEARTBEAT_MS = 2000L
+    /** Socket-connect timeout for a single liveness probe (loopback → very short). */
+    const val HEALTH_TIMEOUT_MS = 700
+
     /** MTProto "secure mode" marker the connect link expects in front of the raw hex secret. */
     const val LINK_SECRET_PREFIX = "dd"
 

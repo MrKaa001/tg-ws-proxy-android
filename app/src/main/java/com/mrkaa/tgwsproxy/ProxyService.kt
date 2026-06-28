@@ -26,6 +26,7 @@ import com.chaquo.python.android.AndroidPlatform
 class ProxyService : android.app.Service() {
 
     @Volatile private var worker: Thread? = null
+    @Volatile private var monitor: Thread? = null
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -45,7 +46,38 @@ class ProxyService : android.app.Service() {
                 start()
             }
         }
+        startMonitor()
         return START_STICKY
+    }
+
+    /**
+     * Background heartbeat: the FGS notification is the status-bar truth, so keep its
+     * text in sync with whether the proxy is actually accepting connections — "starting…"
+     * until the socket binds, "running" once it does, "not responding" if it dies.
+     */
+    private fun startMonitor() {
+        if (monitor != null) return
+        monitor = Thread {
+            var last: Boolean? = null
+            while (!Thread.currentThread().isInterrupted) {
+                val up = ProxyHealth.isUp()
+                // Treat "thread gone AND not listening" as a hard failure, not just startup.
+                val dead = up.not() && worker?.isAlive == false
+                if (up != last) {
+                    last = up
+                    updateNotification(up, dead)
+                }
+                try {
+                    Thread.sleep(Const.HEARTBEAT_MS)
+                } catch (e: InterruptedException) {
+                    break
+                }
+            }
+        }.apply {
+            isDaemon = true
+            name = "proxy-monitor"
+            start()
+        }
     }
 
     private fun runProxy(secret: String) {
@@ -67,6 +99,8 @@ class ProxyService : android.app.Service() {
 
     private fun stopProxy() {
         Log.i(TAG, "stopping proxy (process teardown)")
+        monitor?.interrupt()
+        monitor = null
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
         // Ensure the asyncio loop / sockets actually die.
@@ -75,24 +109,44 @@ class ProxyService : android.app.Service() {
 
     private fun startForegroundCompat() {
         ensureChannel(this)
-        val tap = PendingIntent.getActivity(
-            this, 0,
-            Intent(this, MainActivity::class.java),
-            PendingIntent.FLAG_IMMUTABLE
-        )
-        val notif: Notification = NotificationCompat.Builder(this, Const.NOTIF_CHANNEL)
-            .setContentTitle(getString(R.string.notif_title))
-            .setContentText(getString(R.string.notif_text))
-            .setSmallIcon(R.drawable.ic_stat_proxy)
-            .setOngoing(true)
-            .setContentIntent(tap)
-            .build()
-
+        // Starts in the "coming up" state; the monitor flips it to running once the
+        // socket is actually listening.
+        val notif = buildNotification(up = false, dead = false)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             startForeground(Const.NOTIF_ID, notif, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
         } else {
             startForeground(Const.NOTIF_ID, notif)
         }
+    }
+
+    private fun updateNotification(up: Boolean, dead: Boolean) {
+        getSystemService(NotificationManager::class.java)
+            .notify(Const.NOTIF_ID, buildNotification(up, dead))
+    }
+
+    private fun buildNotification(up: Boolean, dead: Boolean): Notification {
+        val tap = PendingIntent.getActivity(
+            this, 0,
+            Intent(this, MainActivity::class.java),
+            PendingIntent.FLAG_IMMUTABLE
+        )
+        val titleRes = when {
+            up -> R.string.notif_title_running
+            dead -> R.string.notif_title_dead
+            else -> R.string.notif_title_starting
+        }
+        val textRes = when {
+            up -> R.string.notif_text_running
+            dead -> R.string.notif_text_dead
+            else -> R.string.notif_text_starting
+        }
+        return NotificationCompat.Builder(this, Const.NOTIF_CHANNEL)
+            .setContentTitle(getString(titleRes))
+            .setContentText(getString(textRes))
+            .setSmallIcon(R.drawable.ic_stat_proxy)
+            .setOngoing(true)
+            .setContentIntent(tap)
+            .build()
     }
 
     companion object {

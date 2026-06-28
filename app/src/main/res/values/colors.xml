@@ -1,4 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="ic_launcher_background">#0088CC</color>
+
+    <!-- "Encrypted Signal" palette: deep marine surfaces, an emerald live-signal,
+         an azure call-to-action that nods to Telegram without cloning it. -->
+    <color name="navy_900">#0C1626</color> <!-- window background -->
+    <color name="navy_800">#14223A</color> <!-- card surface -->
+    <color name="navy_700">#22375C</color> <!-- outline / elevated variant -->
+
+    <color name="signal">#34D399</color>      <!-- live -->
+    <color name="signal_dim">#5B7089</color>  <!-- stopped / muted -->
+    <color name="amber">#F5A524</color>       <!-- starting / transitional -->
+    <color name="azure">#2E9BFF</color>       <!-- primary action -->
+
+    <color name="paper">#EAF1FB</color>       <!-- primary text -->
+    <color name="paper_dim">#9DB0C9</color>   <!-- secondary text -->
 </resources>

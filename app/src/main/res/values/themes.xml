@@ -1,4 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.TgWsProxy" parent="Theme.Material3.DayNight.NoActionBar" />
+    <!-- A proxy/security tool with a deliberate dark marine identity — fixed dark, not
+         system-following, so the designed status colours read the same everywhere. -->
+    <style name="Theme.TgWsProxy" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/azure</item>
+        <item name="colorOnPrimary">@color/navy_900</item>
+        <item name="colorSecondary">@color/signal</item>
+        <item name="colorOnSecondary">@color/navy_900</item>
+
+        <item name="android:colorBackground">@color/navy_900</item>
+        <item name="colorSurface">@color/navy_800</item>
+        <item name="colorOnSurface">@color/paper</item>
+        <item name="colorSurfaceVariant">@color/navy_700</item>
+        <item name="colorOnSurfaceVariant">@color/paper_dim</item>
+        <item name="colorOutline">@color/navy_700</item>
+
+        <item name="android:statusBarColor">@color/navy_900</item>
+        <item name="android:navigationBarColor">@color/navy_900</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <!-- Small uppercase, letter-spaced eyebrow used to label each section. -->
+    <style name="TextAppearance.TgWsProxy.Eyebrow" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:textColor">@color/paper_dim</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.16</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <!-- Technical values (secret, link, endpoint) rendered like a terminal readout. -->
+    <style name="TextAppearance.TgWsProxy.Mono" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textColor">@color/paper</item>
+        <item name="android:textIsSelectable">true</item>
+    </style>
 </resources>

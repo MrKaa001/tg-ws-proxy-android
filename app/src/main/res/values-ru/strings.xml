@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">TG WS Прокси</string>
+    <string name="version_tag">v0.1.0</string>
+    <string name="endpoint_readout">127.0.0.1:1443</string>
 
-    <string name="status_running">Статус: работает на 127.0.0.1:1443</string>
-    <string name="status_stopped">Статус: остановлен</string>
+    <string name="status_running">Работает</string>
+    <string name="status_starting">Запуск…</string>
+    <string name="status_stopped">Остановлен</string>
+    <string name="status_checking">Проверка…</string>
 
     <string name="btn_start">Запустить прокси</string>
     <string name="btn_stop">Остановить прокси</string>
+    <string name="btn_check">Проверить</string>
     <string name="btn_copy">Копировать секрет</string>
     <string name="btn_regen">Сгенерировать заново</string>
     <string name="btn_telegram">Добавить в Telegram</string>
@@ -17,9 +22,15 @@
     <string name="hint_footer">Прокси работает полностью на этом устройстве и слушает только loopback. Запусти его и нажми «Добавить в Telegram». Работает в любой сети.</string>
 
     <string name="notif_channel">Сервис прокси</string>
-    <string name="notif_title">TG WS Прокси запущен</string>
-    <string name="notif_text">Telegram → 127.0.0.1:1443</string>
+    <string name="notif_title_running">TG WS Прокси работает</string>
+    <string name="notif_title_starting">TG WS Прокси запускается…</string>
+    <string name="notif_title_dead">TG WS Прокси перестал отвечать</string>
+    <string name="notif_text_running">✅ Принимает подключения · 127.0.0.1:1443</string>
+    <string name="notif_text_starting">⏳ Поднимается…</string>
+    <string name="notif_text_dead">❌ Не отвечает — нажми, чтобы открыть</string>
 
+    <string name="toast_check_up">Прокси отвечает (%1$d мс)</string>
+    <string name="toast_check_down">Прокси не отвечает</string>
     <string name="toast_started">Прокси запущен</string>
     <string name="toast_regenerated">Сгенерирован новый секрет — заново добавь его в Telegram</string>
     <string name="toast_secret_copied">Секрет скопирован</string>

@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">TG WS Proxy</string>
+    <string name="version_tag">v0.1.0</string>
+    <string name="endpoint_readout">127.0.0.1:1443</string>
 
-    <string name="status_running">Status: running on 127.0.0.1:1443</string>
-    <string name="status_stopped">Status: stopped</string>
+    <string name="status_running">Running</string>
+    <string name="status_starting">Starting…</string>
+    <string name="status_stopped">Stopped</string>
+    <string name="status_checking">Checking…</string>
 
     <string name="btn_start">Start proxy</string>
     <string name="btn_stop">Stop proxy</string>
+    <string name="btn_check">Check</string>
     <string name="btn_copy">Copy secret</string>
     <string name="btn_regen">Regenerate</string>
     <string name="btn_telegram">Add to Telegram</string>
@@ -17,9 +22,15 @@
     <string name="hint_footer">The proxy runs entirely on this device and listens on loopback only. Start it, then tap \"Add to Telegram\". Works on any network.</string>
 
     <string name="notif_channel">Proxy service</string>
-    <string name="notif_title">TG WS Proxy is running</string>
-    <string name="notif_text">Telegram → 127.0.0.1:1443</string>
+    <string name="notif_title_running">TG WS Proxy is running</string>
+    <string name="notif_title_starting">TG WS Proxy is starting…</string>
+    <string name="notif_title_dead">TG WS Proxy stopped responding</string>
+    <string name="notif_text_running">✅ Accepting connections · 127.0.0.1:1443</string>
+    <string name="notif_text_starting">⏳ Coming up…</string>
+    <string name="notif_text_dead">❌ Not responding — tap to reopen</string>
 
+    <string name="toast_check_up">Proxy is up (%1$d ms)</string>
+    <string name="toast_check_down">Proxy is not responding</string>
     <string name="toast_started">Proxy started</string>
     <string name="toast_regenerated">New secret generated — re-add it in Telegram</string>
     <string name="toast_secret_copied">Secret copied</string>
