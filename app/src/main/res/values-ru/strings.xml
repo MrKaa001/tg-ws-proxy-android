@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TG WS Прокси</string>
+
+    <string name="status_running">Статус: работает на 127.0.0.1:1443</string>
+    <string name="status_stopped">Статус: остановлен</string>
+
+    <string name="btn_start">Запустить прокси</string>
+    <string name="btn_stop">Остановить прокси</string>
+    <string name="btn_copy">Копировать секрет</string>
+    <string name="btn_regen">Сгенерировать заново</string>
+    <string name="btn_telegram">Добавить в Telegram</string>
+    <string name="btn_battery">Отключить экономию батареи</string>
+
+    <string name="label_secret">MTProto-секрет</string>
+    <string name="label_link">Ссылка для подключения</string>
+    <string name="hint_footer">Прокси работает полностью на этом устройстве и слушает только loopback. Запусти его и нажми «Добавить в Telegram». Работает в любой сети.</string>
+
+    <string name="notif_channel">Сервис прокси</string>
+    <string name="notif_title">TG WS Прокси запущен</string>
+    <string name="notif_text">Telegram → 127.0.0.1:1443</string>
+
+    <string name="toast_started">Прокси запущен</string>
+    <string name="toast_regenerated">Сгенерирован новый секрет — заново добавь его в Telegram</string>
+    <string name="toast_secret_copied">Секрет скопирован</string>
+    <string name="toast_link_copied">Telegram не найден — ссылка скопирована в буфер</string>
+    <string name="toast_battery_unavailable">Настройки батареи недоступны на этом устройстве</string>
+</resources>

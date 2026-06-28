@@ -1,0 +1,21 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+        // Chaquopy plugin + runtime + prebuilt pip wheels (cryptography, etc.)
+        maven { url "https://chaquo.com/maven" }
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode = RepositoriesMode.PREFER_SETTINGS
+    repositories {
+        google()
+        mavenCentral()
+        maven { url "https://chaquo.com/maven" }
+    }
+}
+
+rootProject.name = "TG WS Proxy"
+include ':app'

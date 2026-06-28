@@ -1,0 +1,71 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'com.chaquo.python'
+}
+
+android {
+    namespace 'com.mrkaa.tgwsproxy'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.mrkaa.tgwsproxy"
+        minSdk 26
+        targetSdk 34
+        versionCode 1
+        versionName "0.1.0"
+
+        ndk {
+            // Only ship ABIs Chaquopy has prebuilt wheels for that we actually need:
+            // arm64-v8a = real phones, x86_64 = emulator. Drop the rest to shrink the APK.
+            abiFilters "arm64-v8a", "x86_64"
+        }
+
+        // Chaquopy: embed CPython + the upstream proxy + cryptography (prebuilt wheel).
+        // Target 3.11 because that's what buildPython on this machine is (3.11.1)
+        // and it's the minimum the upstream proxy needs (asyncio low-level sockets).
+        python {
+            version "3.11"
+            // buildPython must match the target minor version (3.11). Auto-detected from
+            // PATH; pinned here because this machine's python lives in a non-standard dir.
+            buildPython "C:/Soft/Python/Python311/python.exe"
+            pip {
+                // AES-CTR for MTProto. Upstream has a ctypes/libcrypto fallback, but
+                // Android has no loadable libcrypto.so by name, so the wheel is required.
+                install "cryptography"
+            }
+        }
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
+            versionNameSuffix "-debug"
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+    buildFeatures {
+        viewBinding true
+    }
+}
+
+// Python sources live in the default Chaquopy dir: src/main/python/
+// (proxy_entry.py + the fetched proxy/ from upstream — see tools/fetch_upstream.*)
+
+dependencies {
+    implementation 'androidx.core:core-ktx:1.13.1'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+}

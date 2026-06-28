@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TG WS Proxy</string>
+
+    <string name="status_running">Status: running on 127.0.0.1:1443</string>
+    <string name="status_stopped">Status: stopped</string>
+
+    <string name="btn_start">Start proxy</string>
+    <string name="btn_stop">Stop proxy</string>
+    <string name="btn_copy">Copy secret</string>
+    <string name="btn_regen">Regenerate</string>
+    <string name="btn_telegram">Add to Telegram</string>
+    <string name="btn_battery">Disable battery optimization</string>
+
+    <string name="label_secret">MTProto secret</string>
+    <string name="label_link">Connect link</string>
+    <string name="hint_footer">The proxy runs entirely on this device and listens on loopback only. Start it, then tap \"Add to Telegram\". Works on any network.</string>
+
+    <string name="notif_channel">Proxy service</string>
+    <string name="notif_title">TG WS Proxy is running</string>
+    <string name="notif_text">Telegram → 127.0.0.1:1443</string>
+
+    <string name="toast_started">Proxy started</string>
+    <string name="toast_regenerated">New secret generated — re-add it in Telegram</string>
+    <string name="toast_secret_copied">Secret copied</string>
+    <string name="toast_link_copied">Telegram not found — link copied to clipboard</string>
+    <string name="toast_battery_unavailable">Battery settings not available on this device</string>
+</resources>

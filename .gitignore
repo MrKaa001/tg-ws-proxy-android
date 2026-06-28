@@ -1,0 +1,18 @@
+# Android / Gradle
+.gradle/
+build/
+local.properties
+*.iml
+.idea/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Keystores / signing
+*.jks
+*.keystore
+keystore.properties
+
+# Fetched upstream proxy code — NOT vendored (mirrors the HA add-on philosophy).
+# Pulled at build prep by tools/fetch_upstream.* from Flowseal/tg-ws-proxy@<pinned SHA>.
+/app/src/main/python/proxy/
