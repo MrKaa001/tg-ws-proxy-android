@@ -19,3 +19,6 @@ keystore.properties
 
 # Pre-fetched Chaquopy native wheels (workaround for chaquo.com throttling). Binary, not vendored.
 /wheels/
+
+# Session handoff note — local only, regenerated each close-session.
+/NEXT_SESSION.md
