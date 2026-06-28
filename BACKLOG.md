@@ -10,9 +10,9 @@ Roadmap beyond the working v0.1.0 APK. Upstream `proxy/` TODOs are Flowseal's, n
 - ✅ Live status: honest TCP liveness probe driving the FGS notification + in-app heartbeat + manual "Check".
 - ✅ "Encrypted Signal" UI redesign.
 - ✅ Graceful stop — signal upstream `stop_event`, unwind the loop, keep the process alive (hard kill only as a timeout backstop).
+- ✅ Release signing — `signingConfigs` reading `keystore.properties` (gitignored) + R8 minify + resource shrinking; `assembleRelease` → signed 23 MB APK.
 
 ## Next
-- 📦 **Release signing** — signed/minified release build; one keystore so updates install over (cheap, needed to hand the APK around).
 - 🔄 **Survive reboot / death** — `BootReceiver` + restart-on-process-death so the proxy is "always on".
 - 🎚️ **Quick Settings tile + Stop action in the notification** — toggle from the shade without opening the app.
 - 🎨 **Launcher icon** matching the marine identity (currently default-ish, #0088CC).

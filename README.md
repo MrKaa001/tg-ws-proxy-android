@@ -67,6 +67,30 @@ bash tools/fetch_wheels.sh
 # APK lands at app/build/outputs/apk/debug/app-debug.apk
 ```
 
+### Signed release build
+
+The shareable build is signed so updates install over the same key. Secrets live in a
+git-ignored `keystore.properties` at the repo root (a `keystore.properties.example` stub is
+committed). One-time setup:
+
+```bash
+# 1. Generate a keystore (keep tg-ws-proxy-release.jks OUT of git — *.jks is gitignored;
+#    back it up + remember the password, or future updates can't be signed over):
+keytool -genkeypair -v -keystore tg-ws-proxy-release.jks -alias tgwsproxy \
+  -keyalg RSA -keysize 2048 -validity 10000
+
+# 2. Fill keystore.properties (copy from keystore.properties.example):
+#    storeFile / storePassword / keyAlias / keyPassword
+cp keystore.properties.example keystore.properties   # then edit
+
+# 3. Build the signed, minified release (R8 + resource shrinking):
+./gradlew assembleRelease
+# APK lands at app/build/outputs/apk/release/app-release.apk (~23 MB)
+```
+
+> ⚠️ Without `keystore.properties`, `assembleRelease` still runs but produces an **unsigned**
+> APK. R8 keep rules for Chaquopy + the app package are in `app/proguard-rules.pro`.
+
 ## Validate (milestone 1)
 
 Before polishing UI, confirm on a real phone:

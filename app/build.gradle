@@ -4,6 +4,14 @@ plugins {
     id 'com.chaquo.python'
 }
 
+// Release signing — secrets live in keystore.properties at the project root (gitignored).
+// Missing file is fine for debug builds; release just falls back to unsigned then.
+def keystorePropsFile = rootProject.file("keystore.properties")
+def keystoreProps = new Properties()
+if (keystorePropsFile.exists()) {
+    keystoreProps.load(new FileInputStream(keystorePropsFile))
+}
+
 android {
     namespace 'com.mrkaa.tgwsproxy'
     compileSdk 34
@@ -43,13 +51,30 @@ android {
         }
     }
 
+    signingConfigs {
+        release {
+            if (keystorePropsFile.exists()) {
+                storeFile rootProject.file(keystoreProps['storeFile'])
+                storePassword keystoreProps['storePassword']
+                keyAlias keystoreProps['keyAlias']
+                keyPassword keystoreProps['keyPassword']
+            }
+        }
+    }
+
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
             versionNameSuffix "-debug"
         }
         release {
-            minifyEnabled false
+            // Sign with the release key when keystore.properties is present; otherwise
+            // assembleRelease produces an unsigned APK (CI/contributor without the key).
+            if (keystorePropsFile.exists()) {
+                signingConfig signingConfigs.release
+            }
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
