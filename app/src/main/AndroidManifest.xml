@@ -44,6 +44,18 @@
                 android:value="On-device MTProto-over-WebSocket proxy for Telegram, listening on loopback (127.0.0.1) only" />
         </service>
 
+        <!-- Quick Settings tile to toggle the proxy from the shade without opening the app. -->
+        <service
+            android:name=".ProxyTileService"
+            android:exported="true"
+            android:icon="@drawable/ic_stat_proxy"
+            android:label="@string/tile_label"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
         <receiver
             android:name=".BootReceiver"
             android:enabled="true"

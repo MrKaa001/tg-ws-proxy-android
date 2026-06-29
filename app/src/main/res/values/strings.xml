@@ -28,6 +28,11 @@
     <string name="notif_text_running">✅ Accepting connections · 127.0.0.1:1443</string>
     <string name="notif_text_starting">⏳ Coming up…</string>
     <string name="notif_text_dead">❌ Not responding — tap to reopen</string>
+    <string name="notif_action_stop">Stop</string>
+
+    <string name="tile_label">TG Proxy</string>
+    <string name="tile_sub_running">Running</string>
+    <string name="tile_sub_stopped">Tap to start</string>
 
     <string name="toast_check_up">Proxy is up (%1$d ms)</string>
     <string name="toast_check_down">Proxy is not responding</string>
