@@ -13,9 +13,9 @@ Roadmap beyond the working v0.1.0 APK. Upstream `proxy/` TODOs are Flowseal's, n
 - ✅ Release signing — `signingConfigs` reading `keystore.properties` (gitignored) + R8 minify + resource shrinking; `assembleRelease` → signed 23 MB APK.
 - ✅ Survive reboot / death — `BootReceiver` (BOOT_COMPLETED + MY_PACKAGE_REPLACED) + START_STICKY restart, gated on a persisted `auto_start` intent flag; sticky restart now reuses the saved secret instead of generating a fresh one.
 - ✅ Quick Settings tile + Stop action in the notification — `ProxyTileService` (QS tile mirroring the live-socket state, toggling via the existing start/ACTION_STOP paths) + a Stop `NotificationCompat.Action` on the FGS notification. Toggle from the shade without opening the app.
+- ✅ Launcher icon — marine "Encrypted Signal" adaptive icon (emerald core + azure pulse rings on a navy gradient, matching the UI palette) + monochrome layer for themed icons (Android 13+).
 
 ## Next
-- 🎨 **Launcher icon** matching the marine identity (currently default-ish, #0088CC).
 - 📱 **More ABIs** — `armeabi-v7a` (very old phones), `x86_64` (emulator; dropped to shrink the APK + avoid a 2nd wheel set).
 - ⚙️ **Expose `dc_ips` / fronting domains in the UI** — currently upstream defaults are baked in.
 
