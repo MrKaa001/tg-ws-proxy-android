@@ -18,3 +18,6 @@ Roadmap beyond the working v0.1.0 APK. Upstream `proxy/` TODOs are Flowseal's, n
 - 🎨 **Launcher icon** matching the marine identity (currently default-ish, #0088CC).
 - 📱 **More ABIs** — `armeabi-v7a` (very old phones), `x86_64` (emulator; dropped to shrink the APK + avoid a 2nd wheel set).
 - ⚙️ **Expose `dc_ips` / fronting domains in the UI** — currently upstream defaults are baked in.
+
+## Known limitations (won't-fix / out of our hands)
+- **Auto-start after reboot doesn't fire on aggressive-OEM ROMs** (Xiaomi/Huawei/Oppo/Vivo etc.). The `BootReceiver` + manifest are correct (`targetSdk 34`, so the Android 15 boot-FGS restriction doesn't apply) — the OEM simply doesn't deliver `BOOT_COMPLETED` to apps not whitelisted in Autostart. No code workaround exists (WorkManager/AlarmManager are throttled the same way); the user must enable Autostart + disable battery optimization for the app. Deprioritized — not critical for our use.
