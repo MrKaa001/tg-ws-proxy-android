@@ -3,6 +3,33 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project is pre-release.
 
+## [0.2.0] — 2026-06-29
+
+Shade-level control + brand identity. Signed release built and tagged `v0.2.0`
+(versionCode 2), 22.3 MB, verified clean of personal data (see Notes).
+
+### Added
+- Quick Settings tile (`ProxyTileService`) — toggle the proxy from the shade without
+  opening the app. Tile state mirrors the same honest live-socket truth (`ProxyHealth`)
+  the notification uses; toggling reuses the existing start / `ACTION_STOP` paths, so
+  reboot/death auto-restart and graceful stop keep working. Probe runs off the main
+  thread; `onClick` flips optimistically, `onStartListening` reconciles.
+- Stop action on the foreground-service notification — a `NotificationCompat.Action`
+  wired to `ACTION_STOP` (clears `auto_start` + unwinds the loop gracefully).
+- Marine "Encrypted Signal" adaptive launcher icon — emerald live-signal core + azure
+  pulse rings on a navy gradient (the in-app palette), replacing the default-ish
+  cube-on-#0088CC. Includes a `<monochrome>` layer for themed icons (Android 13+).
+
+### Notes
+- Reboot auto-start does **not** fire on aggressive-OEM ROMs (Xiaomi/Huawei/Oppo/Vivo):
+  the OEM doesn't deliver `BOOT_COMPLETED` to apps not whitelisted in Autostart. The code
+  is correct (`targetSdk 34`, so the Android 15 boot-FGS restriction doesn't apply); no
+  code workaround exists. User must enable Autostart + disable battery optimization.
+  Deprioritized — not critical. See `BACKLOG.md` → Known limitations.
+- APK inspected (739 entries, dex + `.pyc` included): no name/email/build-paths/secret.
+  Only identifier is the signing cert DN (`CN=tg-ws-proxy, OU=MrKaa, C=RU` — a chosen
+  pseudonym, present in any signed APK). Safe to hand around.
+
 ## [0.1.0] — unreleased
 
 First working self-contained APK: Telegram's MTProto-over-WebSocket proxy running
