@@ -6,7 +6,9 @@ All notable changes to this project are documented here. Format follows
 ## [0.3.0] — 2026-11-16
 
 Upstream proxy refresh: v1.8.1 → **v1.10.4** (Flowseal/tg-ws-proxy@`70b982d`), keeping the
-HA add-on sibling and this APK on the same pinned commit.
+HA add-on sibling and this APK on the same pinned commit. Signed release built and tagged
+`v0.3.0` (versionCode 3), 22.5 MB / 767 entries, same signing key as v0.2.0; APK scanned
+clean of personal data (paths/names — none).
 
 ### Changed
 - `tools/fetch_upstream.{sh,ps1}` pin bumped to v1.10.4 (`70b982d`); `app/src/main/python/proxy`
