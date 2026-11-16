@@ -3,8 +3,8 @@
 # into app/src/main/python/proxy. NOT vendored in git — mirrors the HA add-on model.
 set -euo pipefail
 
-# Flowseal/tg-ws-proxy — pinned to release v1.8.1 (keep in sync with the HA add-on Dockerfile)
-REF="4f9edf3072454dcb18831e65e7cfdb68f7046a61"
+# Flowseal/tg-ws-proxy — pinned to release v1.10.4 (keep in sync with the HA add-on Dockerfile)
+REF="70b982da2ca75637b61f281170e4ed57df763db8"
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 DEST="$ROOT/app/src/main/python/proxy"

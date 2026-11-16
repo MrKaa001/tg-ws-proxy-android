@@ -3,6 +3,32 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project is pre-release.
 
+## [0.3.0] — 2026-11-16
+
+Upstream proxy refresh: v1.8.1 → **v1.10.4** (Flowseal/tg-ws-proxy@`70b982d`), keeping the
+HA add-on sibling and this APK on the same pinned commit.
+
+### Changed
+- `tools/fetch_upstream.{sh,ps1}` pin bumped to v1.10.4 (`70b982d`); `app/src/main/python/proxy`
+  re-fetched (not vendored, so the pin is the only source of truth).
+- versionCode 2 → 3, versionName 0.2.0 → 0.3.0.
+
+### Added
+- `certifi` to Chaquopy pip installs (pure-python wheel, prefetched into `wheels/`):
+  upstream v1.10.4 imports it at module level for TLS root certificates
+  (`ssl.create_default_context(cafile=certifi.where())`); without it the proxy dies with
+  ImportError at start.
+
+### Notes
+- Upstream deltas that matter on-device: direct-connection pool recreates closed idle
+  connections; faster DC connects (v1.9.0); CF Workers upload/multi-domain fixes (v1.9.1);
+  improved direct-connection stability (v1.10.1); logging auto-hides domains (v1.10.2).
+  `utils.logging_setup` import in `tg_ws_proxy.py` only fires with `--log-file`, which we
+  don't pass — no extra packaging needed.
+- `cryptography` stays at 42.0.8 (Chaquopy cp311/arm64 wheel); upstream's desktop pin moved
+  to 46.0.5 but the AES surface it uses is unchanged since v1.8.1 (`proxy/_aes.py` untouched
+  in the v1.8.1→v1.10.4 diff).
+
 ## [0.2.0] — 2026-06-29
 
 Shade-level control + brand identity. Signed release built and tagged `v0.2.0`

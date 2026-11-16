@@ -3,8 +3,8 @@
 # Run once before building (and again after bumping $Ref to a new upstream release).
 $ErrorActionPreference = "Stop"
 
-# Flowseal/tg-ws-proxy — pinned to release v1.8.1 (keep in sync with the HA add-on Dockerfile)
-$Ref = "4f9edf3072454dcb18831e65e7cfdb68f7046a61"
+# Flowseal/tg-ws-proxy — pinned to release v1.10.4 (keep in sync with the HA add-on Dockerfile)
+$Ref = "70b982da2ca75637b61f281170e4ed57df763db8"
 
 $Root = Split-Path -Parent $PSScriptRoot
 $Dest = Join-Path $Root "app\src\main\python\proxy"
