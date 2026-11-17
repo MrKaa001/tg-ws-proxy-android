@@ -97,6 +97,11 @@ on-device (Chaquopy / embedded CPython 3.11), listening on loopback only.
 - Build targets arm64-v8a only (x86_64 dropped to shrink the APK / avoid a 2nd wheel set).
 
 ### Fixed
+- Header version tag showed stale hardcoded values — `version_tag` lived in strings.xml
+  per-locale and had drifted (en: v0.2.0, ru: still v0.1.0, actual build: 0.3.0). Now
+  generated from `versionName` via gradle `resValue` (debug builds show the `-debug`
+  suffix too); hardcoded copies removed. Verified byte-level in the APK: exactly one
+  `v0.3.0`, zero stale strings.
 - Sticky restart (null intent after process death) no longer drops the user's secret and
   lets upstream generate a mismatched one — it now falls back to the persisted secret, so
   the existing `tg://proxy?…secret=…` link keeps working after a restart.

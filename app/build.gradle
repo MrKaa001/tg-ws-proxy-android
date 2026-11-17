@@ -23,6 +23,11 @@ android {
         versionCode 3
         versionName "0.3.0"
 
+        // Header "vX.Y.Z" tag derives from versionName — no per-locale hardcoded copies
+        // (they drifted: values had v0.2.0, values-ru still v0.1.0). Debug builds get
+        // "v0.3.0-debug" via versionNameSuffix automatically.
+        resValue "string", "version_tag", "v${versionName}"
+
         ndk {
             // Real phones only. x86_64 (emulator) dropped so we don't need a 2nd set of
             // native wheels — add it back (+ its wheels in wheels/) if emulator testing is needed.

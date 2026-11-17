@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">TG WS Прокси</string>
-    <string name="version_tag">v0.1.0</string>
+    <!-- version_tag is generated from versionName via resValue in build.gradle -->
     <string name="endpoint_readout">127.0.0.1:1443</string>
 
     <string name="status_running">Работает</string>
