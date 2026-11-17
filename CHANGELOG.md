@@ -11,6 +11,9 @@ HA add-on sibling and this APK on the same pinned commit. Signed release built a
 clean of personal data (paths/names — none).
 
 ### Changed
+- APK output names are now versioned: `tg-ws-proxy-<version>.apk` (release) /
+  `tg-ws-proxy-<version>-debug.apk` (debug) via `applicationVariants.outputs.outputFileName`
+  — no more anonymous `app-release.apk` floating around when sharing builds.
 - `tools/fetch_upstream.{sh,ps1}` pin bumped to v1.10.4 (`70b982d`); `app/src/main/python/proxy`
   re-fetched (not vendored, so the pin is the only source of truth).
 - versionCode 2 → 3, versionName 0.2.0 → 0.3.0.

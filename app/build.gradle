@@ -55,6 +55,14 @@ android {
         }
     }
 
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            // Versioned APK names so shared/release files never collide:
+            // tg-ws-proxy-0.3.0.apk (release), tg-ws-proxy-0.3.0-debug.apk (debug).
+            outputFileName = "tg-ws-proxy-${variant.versionName}.apk"
+        }
+    }
+
     signingConfigs {
         release {
             if (keystorePropsFile.exists()) {

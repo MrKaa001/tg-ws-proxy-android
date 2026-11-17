@@ -64,7 +64,7 @@ bash tools/fetch_wheels.sh
 
 # 3. Install on a connected device:
 ./gradlew installDebug
-# APK lands at app/build/outputs/apk/debug/app-debug.apk
+# APK lands at app/build/outputs/apk/debug/tg-ws-proxy-<version>-debug.apk
 ```
 
 ### Signed release build
@@ -85,7 +85,7 @@ cp keystore.properties.example keystore.properties   # then edit
 
 # 3. Build the signed, minified release (R8 + resource shrinking):
 ./gradlew assembleRelease
-# APK lands at app/build/outputs/apk/release/app-release.apk (~23 MB)
+# APK lands at app/build/outputs/apk/release/tg-ws-proxy-<version>.apk (~23 MB)
 ```
 
 > ⚠️ Without `keystore.properties`, `assembleRelease` still runs but produces an **unsigned**
