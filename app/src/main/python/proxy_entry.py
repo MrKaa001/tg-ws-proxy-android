@@ -27,7 +27,7 @@ _stop_event = None      # asyncio.Event the upstream _run() watches
 _state_lock = threading.Lock()
 
 
-def start(host, port, secret, dc_ips):
+def start(host, port, secret, dc_ips, cf_worker_domains=None):
     """Called from Kotlin (Chaquopy). Blocks on the proxy's asyncio loop until stop()."""
     from proxy import tg_ws_proxy
 
@@ -39,6 +39,12 @@ def start(host, port, secret, dc_ips):
             argv += ["--dc-ip", str(dc)]
     if secret:
         argv += ["--secret", str(secret)]
+    if cf_worker_domains:
+        # cf_worker_domains: iterable of user's Cloudflare Worker domains
+        # (e.g. "name.username.workers.dev"). Repeatable flag; upstream tries
+        # these before other WS fallback methods.
+        for domain in cf_worker_domains:
+            argv += ["--cfproxy-worker-domain", str(domain)]
     sys.argv = argv
 
     # Graceful stop keeps the process alive, so main() may run again in the same

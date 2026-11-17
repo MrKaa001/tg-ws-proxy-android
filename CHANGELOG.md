@@ -3,6 +3,20 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project is pre-release.
 
+## [0.4.0] — 2026-11-17
+
+Cloudflare Worker fallback exposed in the app.
+
+### Added
+- **CF Worker domains field** (card between secret and connect-link): own
+  `*.workers.dev` domains passed to upstream as repeatable `--cfproxy-worker-domain`
+  flags — upstream tries them before other fallback methods (useful when the ISP blocks
+  both direct DC connects and the public CF-proxy pool; see upstream docs/RU/CfWorker.md).
+  Raw string persisted in prefs on focus-loss/IME-done (comma/space separated);
+  parsed (lowercase, dedup) at proxy start, survives sticky restarts. Empty → upstream's
+  own fallback chain, behaviour unchanged.
+- `proxy_entry.start()` grew a 5th arg `cf_worker_domains` (backwards-compatible default None).
+
 ## [0.3.0] — 2026-11-16
 
 Upstream proxy refresh: v1.8.1 → **v1.10.4** (Flowseal/tg-ws-proxy@`70b982d`), keeping the

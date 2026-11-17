@@ -7,6 +7,8 @@ object Const {
 
     const val PREFS = "tgwsproxy"
     const val KEY_SECRET = "secret"
+    /** Optional Cloudflare Worker fallback domains, raw user string (comma/space separated). */
+    const val KEY_CF_WORKER_DOMAINS = "cf_worker_domains"
     /** Persisted "user wants the proxy running" intent — drives reboot/death auto-restart. */
     const val KEY_AUTOSTART = "auto_start"
 

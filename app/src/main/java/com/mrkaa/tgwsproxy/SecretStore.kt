@@ -26,4 +26,24 @@ object SecretStore {
         SecureRandom().nextBytes(bytes)
         return bytes.joinToString("") { "%02x".format(it) }
     }
+
+    // ── Cloudflare Worker fallback domains (optional) ──────────────────────────
+    // Raw string as typed by the user; parsed to a clean list when starting the proxy.
+
+    fun cfWorkerDomainsRaw(ctx: Context): String =
+        ctx.getSharedPreferences(Const.PREFS, Context.MODE_PRIVATE)
+            .getString(Const.KEY_CF_WORKER_DOMAINS, "") ?: ""
+
+    fun saveCfWorkerDomainsRaw(ctx: Context, raw: String) {
+        ctx.getSharedPreferences(Const.PREFS, Context.MODE_PRIVATE)
+            .edit().putString(Const.KEY_CF_WORKER_DOMAINS, raw.trim()).apply()
+    }
+
+    /** Parse "a.workers.dev, b.workers.dev" (any of , ; space newline) → clean distinct list. */
+    fun cfWorkerDomains(ctx: Context): List<String> =
+        cfWorkerDomainsRaw(ctx)
+            .split(',', ';', ' ', '\n', '\t')
+            .map { it.trim().lowercase() }
+            .filter { it.isNotEmpty() }
+            .distinct()
 }

@@ -110,7 +110,12 @@ class ProxyService : android.app.Service() {
             val entry = py.getModule("proxy_entry")
             Log.i(TAG, "starting proxy on ${Const.HOST}:${Const.PORT}")
             // dc_ips = null -> upstream defaults; secret "" -> upstream generates one.
-            entry.callAttr("start", Const.HOST, Const.PORT, secret, null)
+            // CF Worker domains come from prefs (persisted, survives sticky restarts);
+            // empty list -> upstream's own fallback chain.
+            entry.callAttr(
+                "start", Const.HOST, Const.PORT, secret, null,
+                SecretStore.cfWorkerDomains(this)
+            )
         } catch (e: PyException) {
             Log.e(TAG, "python proxy crashed", e)
         } catch (e: Throwable) {

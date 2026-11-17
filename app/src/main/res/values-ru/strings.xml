@@ -3,6 +3,9 @@
     <string name="app_name">TG WS Прокси</string>
     <!-- version_tag is generated from versionName via resValue in build.gradle -->
     <string name="endpoint_readout">127.0.0.1:1443</string>
+    <string name="label_cf_worker">Cloudflare Worker (опционально)</string>
+    <string name="hint_cf_worker">name.username.workers.dev, …</string>
+    <string name="helper_cf_worker">Свои домены Cloudflare Worker для обхода блокировок (дока апстрима CfWorker). Через запятую или пробел. Применятся при следующем старте прокси.</string>
 
     <string name="status_running">Работает</string>
     <string name="status_starting">Запуск…</string>

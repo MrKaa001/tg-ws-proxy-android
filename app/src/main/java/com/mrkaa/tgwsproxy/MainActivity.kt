@@ -61,6 +61,20 @@ class MainActivity : AppCompatActivity() {
         secret = SecretStore.getOrCreate(this)
         renderSecret()
 
+        // Optional CF Worker fallback domains — persisted on focus loss / IME done;
+        // picked up by ProxyService on the next proxy start.
+        b.etCfWorkers.setText(SecretStore.cfWorkerDomainsRaw(this))
+        b.etCfWorkers.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) SecretStore.saveCfWorkerDomainsRaw(this, b.etCfWorkers.text.toString())
+        }
+        b.etCfWorkers.setOnEditorActionListener { v, actionId, _ ->
+            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_DONE) {
+                SecretStore.saveCfWorkerDomainsRaw(this, b.etCfWorkers.text.toString())
+                v.clearFocus()
+            }
+            false
+        }
+
         b.btnToggle.setOnClickListener { toggle() }
         b.btnCheck.setOnClickListener { manualCheck() }
         b.btnTelegram.setOnClickListener { openInTelegram() }
