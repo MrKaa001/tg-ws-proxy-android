@@ -3,6 +3,20 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project is pre-release.
 
+## [0.5.0] — 2026-11-17
+
+Reliability polish (ideas from reviewing the independent amurcanov/tg-ws-proxy-android).
+
+### Changed
+- `START_STICKY` → **`START_REDELIVER_INTENT`**: after a memory-pressure kill the system
+  restarts the service with the original start intent (extras intact) instead of a null
+  one — combined with persisted secret/CF-domains this resurrects the exact start.
+
+### Added
+- **Port pre-check** before starting the Python core: if `127.0.0.1:1443` is already
+  bound (stale instance, another app), the user gets an immediate toast instead of the
+  core failing to bind. Bind-and-release probe on loopback, off the main thread.
+
 ## [0.4.0] — 2026-11-17
 
 Cloudflare Worker fallback exposed in the app.

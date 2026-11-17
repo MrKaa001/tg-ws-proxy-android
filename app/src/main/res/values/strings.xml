@@ -6,6 +6,7 @@
     <string name="label_cf_worker">Cloudflare Worker (optional)</string>
     <string name="hint_cf_worker">name.username.workers.dev, …</string>
     <string name="helper_cf_worker">Your own Cloudflare Worker domains for the DC fallback (see upstream CfWorker docs). Comma or space separated. Applied on the next proxy start.</string>
+    <string name="toast_port_busy">Port 1443 is already in use — another proxy instance?</string>
 
     <string name="status_running">Running</string>
     <string name="status_starting">Starting…</string>

@@ -18,6 +18,13 @@ Roadmap beyond the working v0.1.0 APK. Upstream `proxy/` TODOs are Flowseal's, n
 ## Next
 - 📱 **More ABIs** — `armeabi-v7a` (very old phones), `x86_64` (emulator; dropped to shrink the APK + avoid a 2nd wheel set).
 - ⚙️ **Expose `dc_ips` / fronting domains in the UI** — currently upstream defaults are baked in.
+- 🔁 **In-app update checker** — deferred 2026-11-17 (Pavel): needs a public release channel
+  first (candidate: dedicated public repo with APK-only releases, sources stay local);
+  then a simple manual "Check for update" button hitting `releases/latest`.
+- 📊 Ideas parked after reviewing amurcanov/tg-ws-proxy-android (2026-11-17): live
+  traffic stats (up/down/active) + Restart button in the notification (counters already
+  exist in upstream `proxy/stats.py`); support-report-to-clipboard button. Both cheap,
+  both not requested for now.
 
 ## Known limitations (won't-fix / out of our hands)
 - **Auto-start after reboot doesn't fire on aggressive-OEM ROMs** (Xiaomi/Huawei/Oppo/Vivo etc.). The `BootReceiver` + manifest are correct (`targetSdk 34`, so the Android 15 boot-FGS restriction doesn't apply) — the OEM simply doesn't deliver `BOOT_COMPLETED` to apps not whitelisted in Autostart. No code workaround exists (WorkManager/AlarmManager are throttled the same way); the user must enable Autostart + disable battery optimization for the app. Deprioritized — not critical for our use.

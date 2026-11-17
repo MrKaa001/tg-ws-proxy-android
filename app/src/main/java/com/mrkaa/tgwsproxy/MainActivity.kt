@@ -110,12 +110,25 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startProxy() {
-        val i = Intent(this, ProxyService::class.java)
-            .putExtra(ProxyService.EXTRA_SECRET, secret)
-        ContextCompat.startForegroundService(this, i)
-        userWantsRunning = true
-        renderHealth(false) // optimistic "starting…" until the next probe confirms
-        toast(getString(R.string.toast_started))
+        // Pre-check the port off the main thread — if something already owns
+        // 127.0.0.1:1443 the Python core would fail to bind; tell the user instead.
+        b.btnToggle.isEnabled = false
+        healthExec.submit {
+            val free = ProxyHealth.portFree()
+            mainHandler.post {
+                b.btnToggle.isEnabled = true
+                if (!free) {
+                    toast(getString(R.string.toast_port_busy))
+                    return@post
+                }
+                val i = Intent(this, ProxyService::class.java)
+                    .putExtra(ProxyService.EXTRA_SECRET, secret)
+                ContextCompat.startForegroundService(this, i)
+                userWantsRunning = true
+                renderHealth(false) // optimistic "starting…" until the next probe confirms
+                toast(getString(R.string.toast_started))
+            }
+        }
     }
 
     private fun stopProxy() {

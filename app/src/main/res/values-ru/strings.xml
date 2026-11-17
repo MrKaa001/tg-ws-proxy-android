@@ -6,6 +6,7 @@
     <string name="label_cf_worker">Cloudflare Worker (опционально)</string>
     <string name="hint_cf_worker">name.username.workers.dev, …</string>
     <string name="helper_cf_worker">Свои домены Cloudflare Worker для обхода блокировок (дока апстрима CfWorker). Через запятую или пробел. Применятся при следующем старте прокси.</string>
+    <string name="toast_port_busy">Порт 1443 уже занят — возможно, прокси уже запущен.</string>
 
     <string name="status_running">Работает</string>
     <string name="status_starting">Запуск…</string>

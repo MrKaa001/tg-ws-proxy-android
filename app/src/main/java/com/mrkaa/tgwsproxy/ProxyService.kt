@@ -68,7 +68,10 @@ class ProxyService : android.app.Service() {
             }
         }
         startMonitor()
-        return START_STICKY
+        // REDELIVER over STICKY: if the system kills us for memory, we're restarted
+        // with the original start intent (extras intact) instead of a null one —
+        // combined with the persisted secret/prefs this resurrects the exact start.
+        return START_REDELIVER_INTENT
     }
 
     /**
