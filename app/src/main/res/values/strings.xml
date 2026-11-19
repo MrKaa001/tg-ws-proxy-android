@@ -45,4 +45,17 @@
     <string name="toast_secret_copied">Secret copied</string>
     <string name="toast_link_copied">Telegram not found — link copied to clipboard</string>
     <string name="toast_battery_unavailable">Battery settings not available on this device</string>
+
+    <string name="label_update">Update</string>
+    <string name="update_checking">Checking for updates…</string>
+    <string name="update_uptodate">Latest version installed (%1$s)</string>
+    <string name="update_available">Update available: %1$s · %2$s</string>
+    <string name="update_downloading">Downloading… %1$d%%</string>
+    <string name="update_downloaded">%1$s downloaded — ready to install</string>
+    <string name="update_check_failed">Update check failed — try again later</string>
+    <string name="update_download_failed">Download failed — try again</string>
+    <string name="btn_update_check">Check for update</string>
+    <string name="btn_update_download">Download %1$s</string>
+    <string name="btn_update_install">Install update</string>
+    <string name="toast_install_fail">Couldn\'t start the installer</string>
 </resources>

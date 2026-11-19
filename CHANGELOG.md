@@ -3,6 +3,27 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project is pre-release.
 
+## [0.6.0] — 2026-11-19
+
+Self-update: the app now checks and updates itself from a private GitHub repo's Releases.
+
+### Added
+- **In-app self-update** over GitHub Releases of a private repo (coords + PAT in
+  `update.properties`, gitignored — see `update.properties.example`): silent check on
+  open plus a manual "Check for update" card, numeric per-segment tag compare, APK
+  download with progress into `cache/updates/` (.part file + rename + Content-Length and
+  metadata size verification), hand-off to the system installer via FileProvider
+  (`REQUEST_INSTALL_PACKAGES`; Android walks the user through the "install unknown apps"
+  consent). Private-repo asset downloads follow the 302 to the signed URL manually so the
+  Authorization header never leaks to the redirect host. The APK embeds a fine-grained
+  read-only PAT scoped to this repo only — accepted trade-off for a friends-only
+  distribution. The update card hides itself on builds without config. After a self-update
+  install, `MY_PACKAGE_REPLACED` (already handled by `BootReceiver`) restarts the proxy
+  if it was running.
+- `tools/release.sh`: build signed APK → push main → create the release + upload the APK
+  asset via API (write PAT from `update.properties`, local-only) → verify
+  `/releases/latest` serves the tag and the exact APK size.
+
 ## [0.5.0] — 2026-11-17
 
 Reliability polish (ideas from reviewing the independent amurcanov/tg-ws-proxy-android).

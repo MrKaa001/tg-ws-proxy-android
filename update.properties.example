@@ -1,0 +1,15 @@
+# Self-update channel — copy to update.properties (gitignored) and fill in.
+#
+# github.token          fine-grained PAT, ONLY this repo, Contents: Read-only.
+#                       This one ships inside the APK — anyone holding the APK can read
+#                       the repo. Accepted trade-off for a friends-only distribution.
+# github.release_token  fine-grained PAT, ONLY this repo, Contents: Read+Write.
+#                       Never embedded in the app — used by tools/release.sh on the PC.
+#
+# The repo must be private with versioned Releases carrying .apk assets
+# (tools/release.sh builds and publishes them).
+
+github.owner=MrKaa001
+github.repo=tg-ws-proxy-android
+github.token=
+github.release_token=

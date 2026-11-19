@@ -40,4 +40,17 @@
     <string name="toast_secret_copied">Секрет скопирован</string>
     <string name="toast_link_copied">Telegram не найден — ссылка скопирована в буфер</string>
     <string name="toast_battery_unavailable">Настройки батареи недоступны на этом устройстве</string>
+
+    <string name="label_update">Обновление</string>
+    <string name="update_checking">Проверка обновлений…</string>
+    <string name="update_uptodate">Установлена последняя версия (%1$s)</string>
+    <string name="update_available">Доступно обновление: %1$s · %2$s</string>
+    <string name="update_downloading">Скачивание… %1$d%%</string>
+    <string name="update_downloaded">%1$s скачан — готов к установке</string>
+    <string name="update_check_failed">Не удалось проверить обновления</string>
+    <string name="update_download_failed">Не удалось скачать — попробуй ещё раз</string>
+    <string name="btn_update_check">Проверить обновление</string>
+    <string name="btn_update_download">Скачать %1$s</string>
+    <string name="btn_update_install">Установить обновление</string>
+    <string name="toast_install_fail">Не удалось запустить установку</string>
 </resources>

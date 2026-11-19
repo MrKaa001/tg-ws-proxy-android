@@ -13,11 +13,15 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
+import android.view.View
 import android.widget.Toast
+import java.io.File
+import java.util.Locale
 import java.util.concurrent.Executors
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform
 import com.mrkaa.tgwsproxy.databinding.ActivityMainBinding
@@ -33,6 +37,11 @@ class MainActivity : AppCompatActivity() {
 
     private val mainHandler = Handler(Looper.getMainLooper())
     private val healthExec = Executors.newSingleThreadExecutor()
+
+    /** Self-update state: the newer release we found (if any) and its downloaded APK. */
+    private var pendingUpdate: Updater.UpdateInfo? = null
+    private var downloadedApk: File? = null
+    private val updateExec = Executors.newSingleThreadExecutor()
 
     /** Re-probe the proxy on a fixed cadence while the screen is in front. */
     private val heartbeat = object : Runnable {
@@ -86,6 +95,8 @@ class MainActivity : AppCompatActivity() {
         }
         b.btnBattery.setOnClickListener { requestIgnoreBattery() }
 
+        initUpdateSection()
+
         maybeRequestNotifPermission()
         renderHealth(false)
     }
@@ -103,6 +114,7 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         healthExec.shutdownNow()
+        updateExec.shutdownNow()
     }
 
     private fun toggle() {
@@ -214,6 +226,103 @@ class MainActivity : AppCompatActivity() {
             askNotif.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
     }
+
+    // ── Self-update (private GitHub Releases channel) ─────────────────────────
+
+    /** Wire the update card; hidden entirely on builds without repo config. */
+    private fun initUpdateSection() {
+        if (Updater.unconfigured()) {
+            b.updateSection.visibility = View.GONE
+            return
+        }
+        b.btnUpdate.setOnClickListener { onUpdateAction() }
+        checkForUpdate()
+    }
+
+    /** The single button walks the state machine: check → download → install. */
+    private fun onUpdateAction() {
+        when {
+            pendingUpdate == null -> checkForUpdate(manual = true)
+            downloadedApk == null -> pendingUpdate?.let { downloadUpdate(it) }
+            else -> installUpdate()
+        }
+    }
+
+    /** Silent check on open; manual re-check on tap. UI always lands in a definite state. */
+    private fun checkForUpdate(manual: Boolean = false) {
+        if (manual) {
+            b.btnUpdate.isEnabled = false
+            b.tvUpdate.text = getString(R.string.update_checking)
+        }
+        updateExec.submit {
+            val result = runCatching { Updater.checkLatest() }
+            mainHandler.post {
+                b.btnUpdate.isEnabled = true
+                val info = result.getOrNull()
+                when {
+                    result.isFailure -> {
+                        b.tvUpdate.text = getString(R.string.update_check_failed)
+                        b.btnUpdate.setText(R.string.btn_update_check)
+                    }
+                    info == null || !Updater.isNewer(info.tag, BuildConfig.VERSION_NAME) -> {
+                        pendingUpdate = null
+                        b.tvUpdate.text = getString(R.string.update_uptodate, currentTag())
+                        b.btnUpdate.setText(R.string.btn_update_check)
+                    }
+                    else -> {
+                        pendingUpdate = info
+                        b.tvUpdate.text =
+                            getString(R.string.update_available, info.tag, fmtMiB(info.sizeBytes))
+                        b.btnUpdate.text = getString(R.string.btn_update_download, info.tag)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun downloadUpdate(info: Updater.UpdateInfo) {
+        val target = Updater.targetFile(this, info.assetName)
+        b.btnUpdate.isEnabled = false
+        updateExec.submit {
+            val result = runCatching {
+                Updater.downloadAsset(info, target) { pct ->
+                    mainHandler.post { b.tvUpdate.text = getString(R.string.update_downloading, pct) }
+                }
+            }
+            mainHandler.post {
+                b.btnUpdate.isEnabled = true
+                if (result.isSuccess) {
+                    downloadedApk = target
+                    b.tvUpdate.text = getString(R.string.update_downloaded, info.tag)
+                    b.btnUpdate.setText(R.string.btn_update_install)
+                } else {
+                    b.tvUpdate.text = getString(R.string.update_download_failed)
+                    b.btnUpdate.text = getString(R.string.btn_update_download, info.tag)
+                }
+            }
+        }
+    }
+
+    /** Hand the cached APK to the system installer; Android walks the user through the
+     *  "install unknown apps" consent on the first try. */
+    private fun installUpdate() {
+        val apk = downloadedApk ?: return
+        try {
+            val uri = FileProvider.getUriForFile(this, "$packageName.fileprovider", apk)
+            val i = Intent(Intent.ACTION_VIEW).apply {
+                setDataAndType(uri, "application/vnd.android.package-archive")
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+            startActivity(i)
+        } catch (e: Exception) {
+            toast(getString(R.string.toast_install_fail))
+        }
+    }
+
+    private fun currentTag(): String = "v" + BuildConfig.VERSION_NAME.substringBefore('-')
+
+    private fun fmtMiB(bytes: Long): String =
+        String.format(Locale.US, "%.1f MB", bytes / 1048576.0)
 
     private fun renderSecret() {
         b.tvSecret.text = secret

@@ -12,6 +12,16 @@ if (keystorePropsFile.exists()) {
     keystoreProps.load(new FileInputStream(keystorePropsFile))
 }
 
+// Self-update via GitHub Releases: repo coords + embedded read-only PAT.
+// Lives in update.properties (gitignored) — see update.properties.example.
+// Missing file → empty BuildConfig fields → the in-app update section hides itself.
+def updatePropsFile = rootProject.file("update.properties")
+def updateProps = new Properties()
+if (updatePropsFile.exists()) {
+    updateProps.load(new FileInputStream(updatePropsFile))
+}
+def updateProp = { key -> (updateProps.getProperty(key) ?: "").replace("\"", "\\\"") }
+
 android {
     namespace 'com.mrkaa.tgwsproxy'
     compileSdk 34
@@ -20,12 +30,16 @@ android {
         applicationId "com.mrkaa.tgwsproxy"
         minSdk 26
         targetSdk 34
-        versionCode 5
-        versionName "0.5.0"
+        versionCode 6
+        versionName "0.6.0"
         // Header "vX.Y.Z" tag derives from versionName — no per-locale hardcoded copies
         // (they drifted: values had v0.2.0, values-ru still v0.1.0). Debug builds get
         // "v0.3.0-debug" via versionNameSuffix automatically.
         resValue "string", "version_tag", "v${versionName}"
+
+        buildConfigField "String", "UPDATE_OWNER", "\"${updateProp('github.owner')}\""
+        buildConfigField "String", "UPDATE_REPO", "\"${updateProp('github.repo')}\""
+        buildConfigField "String", "UPDATE_TOKEN", "\"${updateProp('github.token')}\""
 
         ndk {
             // Real phones only. x86_64 (emulator) dropped so we don't need a 2nd set of
@@ -104,6 +118,8 @@ android {
     }
     buildFeatures {
         viewBinding true
+        // AGP 8 defaults this to off; Updater.kt reads BuildConfig.
+        buildConfig true
     }
 }
 
