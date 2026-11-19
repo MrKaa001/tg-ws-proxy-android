@@ -20,6 +20,12 @@
     <string name="btn_regen">Regenerate</string>
     <string name="btn_telegram">Add to Telegram</string>
     <string name="btn_battery">Disable battery optimization</string>
+    <string name="btn_logs">Proxy logs</string>
+    <string name="log_title">Proxy log (last runs)</string>
+    <string name="log_empty">No logs yet — start the proxy first.</string>
+    <string name="log_copy">Copy</string>
+    <string name="log_share">Share</string>
+    <string name="toast_log_copied">Log copied</string>
 
     <string name="label_secret">MTProto secret</string>
     <string name="label_link">Connect link</string>

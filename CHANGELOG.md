@@ -3,6 +3,16 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project is pre-release.
 
+## [0.6.2] — 2026-11-19
+
+### Added
+- **In-app log viewer** («Proxy logs»): Python-side `sys.stdout`/`sys.stderr` teed into
+  `files/proxy.log` (captures upstream logging, argparse errors, tracebacks, and the
+  effective proxy argv), Kotlin lifecycle events appended to the same file (start/stop,
+  Python crash text, stack traces), and an uncaught-exception hook persisting UI crashes
+  before the process dies. Dialog shows the last 64 KB with copy/share; the file trims
+  itself at 256 KB. Built to diagnose a 0.6.1 startup failure without adb.
+
 ## [0.6.1] — 2026-11-19
 
 ### Changed

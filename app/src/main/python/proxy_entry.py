@@ -27,8 +27,55 @@ _stop_event = None      # asyncio.Event the upstream _run() watches
 _state_lock = threading.Lock()
 
 
-def start(host, port, secret, dc_ips, cf_worker_domains=None):
+class _Tee:
+    """Duplicates a stream's writes into a log file, never raising into the proxy.
+
+    Chaquopy routes sys.stdout/stderr to logcat; this tee keeps that AND mirrors
+    everything (upstream logging, argparse errors, tracebacks) into a file the
+    in-app "Proxy logs" dialog can show without adb.
+    """
+
+    def __init__(self, original, path):
+        self._original = original
+        try:
+            self._file = open(path, "a", buffering=1, encoding="utf-8", errors="replace")
+        except Exception:
+            self._file = None
+
+    def write(self, s):
+        try:
+            self._original.write(s)
+        except Exception:
+            pass
+        if self._file is not None:
+            try:
+                self._file.write(s)
+            except Exception:
+                pass
+
+    def flush(self):
+        try:
+            self._original.flush()
+        except Exception:
+            pass
+        if self._file is not None:
+            try:
+                self._file.flush()
+            except Exception:
+                pass
+
+    def isatty(self):
+        return False
+
+    def close(self):
+        pass  # never close the original stream through the tee
+
+
+def start(host, port, secret, dc_ips, cf_worker_domains=None, log_path=None):
     """Called from Kotlin (Chaquopy). Blocks on the proxy's asyncio loop until stop()."""
+    if log_path:
+        sys.stdout = _Tee(sys.stdout, log_path)
+        sys.stderr = _Tee(sys.stderr, log_path)
     from proxy import tg_ws_proxy
 
     argv = ["tg_ws_proxy", "--host", str(host), "--port", str(port)]
@@ -46,6 +93,7 @@ def start(host, port, secret, dc_ips, cf_worker_domains=None):
         for domain in cf_worker_domains:
             argv += ["--cfproxy-worker-domain", str(domain)]
     sys.argv = argv
+    print("[proxy_entry] argv:", " ".join(argv), flush=True)
 
     # Graceful stop keeps the process alive, so main() may run again in the same
     # process on a later Start — clear handlers first so logs don't get duplicated.

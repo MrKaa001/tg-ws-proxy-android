@@ -328,6 +328,15 @@
             android:text="@string/btn_battery"
             android:textColor="@color/paper_dim" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLogs"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/btn_logs"
+            android:textColor="@color/paper_dim" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

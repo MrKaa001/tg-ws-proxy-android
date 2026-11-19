@@ -33,8 +33,15 @@ class ProxyService : android.app.Service() {
 
     override fun onBind(intent: Intent?): IBinder? = null
 
+    override fun onCreate() {
+        super.onCreate()
+        LogStore.installCrashHandler(this)
+        LogStore.append(this, "service created")
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == ACTION_STOP) {
+            LogStore.append(this, "stop requested (notification / UI)")
             setAutoStart(this, false)
             stopProxy()
             return START_NOT_STICKY
@@ -111,18 +118,23 @@ class ProxyService : android.app.Service() {
             }
             val py = Python.getInstance()
             val entry = py.getModule("proxy_entry")
+            val domains = SecretStore.cfWorkerDomains(this)
             Log.i(TAG, "starting proxy on ${Const.HOST}:${Const.PORT}")
+            LogStore.append(this, "proxy thread starting (cfWorkerDomains=$domains)")
             // dc_ips = null -> upstream defaults; secret "" -> upstream generates one.
-            // CF Worker domains come from prefs (persisted, survives sticky restarts);
-            // empty list -> upstream's own fallback chain.
+            // CF Worker domains: user-entered + built-in default (see SecretStore).
+            // log_path mirrors Python stdout/stderr into the in-app log viewer.
             entry.callAttr(
                 "start", Const.HOST, Const.PORT, secret, null,
-                SecretStore.cfWorkerDomains(this)
+                domains, LogStore.file(this).absolutePath
             )
+            LogStore.append(this, "proxy loop exited")
         } catch (e: PyException) {
             Log.e(TAG, "python proxy crashed", e)
+            LogStore.append(this, "python proxy crashed: $e")
         } catch (e: Throwable) {
             Log.e(TAG, "proxy thread error", e)
+            LogStore.append(this, "proxy thread error: ${Log.getStackTraceString(e)}")
         }
     }
 
@@ -157,9 +169,11 @@ class ProxyService : android.app.Service() {
             worker = null
             if (graceful) {
                 Log.i(TAG, "proxy stopped gracefully")
+                LogStore.append(this, "proxy stopped gracefully")
                 finishStop(hard = false)
             } else {
                 Log.w(TAG, "graceful stop timed out — hard teardown")
+                LogStore.append(this, "graceful stop timed out — hard teardown")
                 finishStop(hard = true)
             }
         }.apply { isDaemon = true; name = "proxy-stop"; start() }

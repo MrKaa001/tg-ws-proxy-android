@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.content.pm.PackageManager
+import android.graphics.Typeface
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -14,6 +15,8 @@ import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
 import android.view.View
+import android.widget.ScrollView
+import android.widget.TextView
 import android.widget.Toast
 import java.io.File
 import java.util.Locale
@@ -22,6 +25,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform
 import com.mrkaa.tgwsproxy.databinding.ActivityMainBinding
@@ -94,7 +98,9 @@ class MainActivity : AppCompatActivity() {
             toast(getString(R.string.toast_regenerated))
         }
         b.btnBattery.setOnClickListener { requestIgnoreBattery() }
+        b.btnLogs.setOnClickListener { showLogs() }
 
+        LogStore.installCrashHandler(this)
         initUpdateSection()
 
         maybeRequestNotifPermission()
@@ -206,6 +212,41 @@ class MainActivity : AppCompatActivity() {
     private fun copySecret() {
         clipboard().setPrimaryClip(ClipData.newPlainText("mtproto secret", secret))
         toast(getString(R.string.toast_secret_copied))
+    }
+
+    /** Scrollable monospace log tail with copy/share — the no-adb diagnostics channel. */
+    private fun showLogs() {
+        val text = LogStore.tail(this)
+        val body = text.ifEmpty { getString(R.string.log_empty) }
+        val tv = TextView(this).apply {
+            setTextIsSelectable(true)
+            typeface = Typeface.MONOSPACE
+            textSize = 11f
+            setTextColor(ContextCompat.getColor(this@MainActivity, R.color.paper))
+            text = body
+        }
+        val pad = (16 * resources.displayMetrics.density).toInt()
+        val scroll = ScrollView(this).apply {
+            addView(tv)
+            setPadding(pad, pad / 2, pad, pad / 2)
+            post { fullScroll(ScrollView.FOCUS_DOWN) }
+        }
+        MaterialAlertDialogBuilder(this)
+            .setTitle(getString(R.string.log_title))
+            .setView(scroll)
+            .setPositiveButton(R.string.log_copy) { _, _ ->
+                clipboard().setPrimaryClip(ClipData.newPlainText("proxy log", body))
+                toast(getString(R.string.toast_log_copied))
+            }
+            .setNeutralButton(R.string.log_share) { _, _ ->
+                val send = Intent(Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_TEXT, body)
+                }
+                startActivity(Intent.createChooser(send, null))
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
     }
 
     private fun requestIgnoreBattery() {
