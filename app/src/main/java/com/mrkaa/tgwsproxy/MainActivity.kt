@@ -216,8 +216,8 @@ class MainActivity : AppCompatActivity() {
 
     /** Scrollable monospace log tail with copy/share — the no-adb diagnostics channel. */
     private fun showLogs() {
-        val text = LogStore.tail(this)
-        val body = text.ifEmpty { getString(R.string.log_empty) }
+        val raw = LogStore.tail(this)
+        val body = raw.ifEmpty { getString(R.string.log_empty) }
         val tv = TextView(this).apply {
             setTextIsSelectable(true)
             typeface = Typeface.MONOSPACE
