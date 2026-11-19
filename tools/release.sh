@@ -13,7 +13,7 @@ cd "$ROOT"
 # ── config ──
 PROPS="$ROOT/update.properties"
 [ -f "$PROPS" ] || { echo "update.properties missing — copy update.properties.example"; exit 1; }
-prop() { sed -n "s/^$1=//p" "$PROPS" | head -n1; }
+prop() { sed -n "s/^$1=//p" "$PROPS" | head -n1 | tr -d '\r\n'; }
 OWNER="$(prop github.owner)"
 REPO="$(prop github.repo)"
 RTOKEN="$(prop github.release_token)"
