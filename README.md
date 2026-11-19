@@ -91,6 +91,24 @@ cp keystore.properties.example keystore.properties   # then edit
 > ⚠️ Without `keystore.properties`, `assembleRelease` still runs but produces an **unsigned**
 > APK. R8 keep rules for Chaquopy + the app package are in `app/proguard-rules.pro`.
 
+## Releases & self-update
+
+Distribution is a friends-only private channel: Releases of a private GitHub repo plus a
+fine-grained read-only PAT embedded in the APK (accepted trade-off — the worst a leaked
+token does is read this repo's source). The app checks for updates on open (plus the
+in-app "Update" card), downloads the APK and hands it to the system installer.
+
+- **Setup (once):** create the private repo (`MrKaa001/tg-ws-proxy-android`) and two
+  fine-grained PATs scoped to it — Contents: **Read-only** → `github.token` (ships inside
+  the APK), Contents: **Read+Write** → `github.release_token` (stays on the PC). Fill
+  `update.properties` (copy `update.properties.example`).
+- **Ship a version:** bump `versionCode`/`versionName` in `app/build.gradle`, update
+  `CHANGELOG.md`, commit — then `bash tools/release.sh` (builds, pushes, publishes the
+  release + APK asset via API, verifies the channel). JDK note: Gradle 8.7 can't run on
+  JDK 25+; the script pins the scoop JDK 17 when present.
+- **Diagnostics without adb:** the in-app "Proxy logs" button (Python stdout/stderr tee +
+  Kotlin lifecycle events land in `files/proxy.log`; copy/share from the dialog).
+
 ## Validate (milestone 1)
 
 Before polishing UI, confirm on a real phone:
