@@ -122,11 +122,13 @@ class ProxyService : android.app.Service() {
             Log.i(TAG, "starting proxy on ${Const.HOST}:${Const.PORT}")
             LogStore.append(this, "proxy thread starting (cfWorkerDomains=$domains)")
             // dc_ips = null -> upstream defaults; secret "" -> upstream generates one.
-            // CF Worker domains: user-entered + built-in default (see SecretStore).
+            // CF Worker domains: user-entered + built-in default (see SecretStore),
+            // as a comma-joined string — Chaquopy hands java.util.List to Python as
+            // a non-iterable Java proxy (the 0.6.1 startup crash; proxy_entry splits).
             // log_path mirrors Python stdout/stderr into the in-app log viewer.
             entry.callAttr(
                 "start", Const.HOST, Const.PORT, secret, null,
-                domains, LogStore.file(this).absolutePath
+                domains.joinToString(","), LogStore.file(this).absolutePath
             )
             LogStore.append(this, "proxy loop exited")
         } catch (e: PyException) {

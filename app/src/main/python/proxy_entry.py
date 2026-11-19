@@ -87,10 +87,15 @@ def start(host, port, secret, dc_ips, cf_worker_domains=None, log_path=None):
     if secret:
         argv += ["--secret", str(secret)]
     if cf_worker_domains:
-        # cf_worker_domains: iterable of user's Cloudflare Worker domains
-        # (e.g. "name.username.workers.dev"). Repeatable flag; upstream tries
-        # these before other WS fallback methods.
-        for domain in cf_worker_domains:
+        # cf_worker_domains: comma/semicolon/space separated STRING (Kotlin sends this
+        # form — Chaquopy passes java.util.List across the boundary as a non-iterable
+        # Java proxy, see 0.6.3) or an iterable of domains. Repeatable flag; upstream
+        # tries these before other WS fallback methods.
+        if isinstance(cf_worker_domains, str):
+            domains = cf_worker_domains.replace(",", " ").replace(";", " ").split()
+        else:
+            domains = cf_worker_domains
+        for domain in domains:
             argv += ["--cfproxy-worker-domain", str(domain)]
     sys.argv = argv
     print("[proxy_entry] argv:", " ".join(argv), flush=True)

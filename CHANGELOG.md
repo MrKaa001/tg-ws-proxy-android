@@ -3,6 +3,18 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project is pre-release.
 
+## [0.6.3] — 2026-11-19
+
+### Fixed
+- **Proxy startup crash with non-empty CF Worker domains** (introduced in 0.6.1, first
+  non-empty list ever passed): Chaquopy hands `java.util.List` across the Kotlin→Python
+  boundary as a non-iterable Java proxy, so `proxy_entry`'s argv loop died with
+  `TypeError: 'Collections$SingletonList' object is not iterable` (`listOf(x)` of one
+  element is exactly that JVM class). Domains now cross as a comma-separated string and
+  are split Python-side with upstream's separators. The 0.4.0 UI field carried the same
+  latent bug — never exercised with a non-empty list on a device. Diagnosed via the
+  0.6.2 in-app log viewer.
+
 ## [0.6.2] — 2026-11-19
 
 ### Added
