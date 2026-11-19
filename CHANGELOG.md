@@ -3,6 +3,14 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project is pre-release.
 
+## [0.6.1] — 2026-11-19
+
+### Changed
+- **Built-in CF Worker fallback domain** (`proud-bird-bd42.pnlarkin.workers.dev`): always
+  passed to upstream as a `--cfproxy-worker-domain` candidate, so the WS fallback works
+  out of the box. User-entered domains (UI field) are tried first; the built-in one is
+  appended and deduped. First release shipped through the self-update channel.
+
 ## [0.6.0] — 2026-11-19
 
 Self-update: the app now checks and updates itself from a private GitHub repo's Releases.

@@ -30,8 +30,8 @@ android {
         applicationId "com.mrkaa.tgwsproxy"
         minSdk 26
         targetSdk 34
-        versionCode 6
-        versionName "0.6.0"
+        versionCode 7
+        versionName "0.6.1"
         // Header "vX.Y.Z" tag derives from versionName — no per-locale hardcoded copies
         // (they drifted: values had v0.2.0, values-ru still v0.1.0). Debug builds get
         // "v0.3.0-debug" via versionNameSuffix automatically.

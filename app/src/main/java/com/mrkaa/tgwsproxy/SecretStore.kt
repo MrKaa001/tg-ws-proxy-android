@@ -39,11 +39,12 @@ object SecretStore {
             .edit().putString(Const.KEY_CF_WORKER_DOMAINS, raw.trim()).apply()
     }
 
-    /** Parse "a.workers.dev, b.workers.dev" (any of , ; space newline) → clean distinct list. */
+    /** Parse "a.workers.dev, b.workers.dev" (any of , ; space newline) → clean distinct
+     *  list, with the built-in fallback domain appended (user's own tried first). */
     fun cfWorkerDomains(ctx: Context): List<String> =
-        cfWorkerDomainsRaw(ctx)
+        (cfWorkerDomainsRaw(ctx)
             .split(',', ';', ' ', '\n', '\t')
             .map { it.trim().lowercase() }
-            .filter { it.isNotEmpty() }
+            .filter { it.isNotEmpty() } + Const.DEFAULT_CF_WORKER_DOMAINS)
             .distinct()
 }

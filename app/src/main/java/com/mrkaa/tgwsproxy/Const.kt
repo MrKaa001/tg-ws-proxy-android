@@ -25,6 +25,10 @@ object Const {
     /** MTProto "secure mode" marker the connect link expects in front of the raw hex secret. */
     const val LINK_SECRET_PREFIX = "dd"
 
+    /** Built-in CF Worker fallback domain — always offered to upstream, so the WS
+     *  fallback works out of the box. User-entered domains are tried before it. */
+    val DEFAULT_CF_WORKER_DOMAINS = listOf("proud-bird-bd42.pnlarkin.workers.dev")
+
     fun tgLink(secret: String): String =
         "tg://proxy?server=$HOST&port=$PORT&secret=$LINK_SECRET_PREFIX$secret"
 }
