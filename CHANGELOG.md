@@ -3,6 +3,16 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project is pre-release.
 
+## [0.6.4] — 2026-11-19
+
+### Fixed
+- **False "port 1443 already in use" on a quick Stop→Start**: the pre-start probe bound
+  without `SO_REUSEADDR`, making it stricter than the thing it predicts — TIME_WAIT
+  leftovers of the previous run's connections (a burst of rejected handshakes leaves
+  dozens on the listening port) failed the probe for ~a minute, while the Python core
+  (asyncio sets reuseaddr) would have bound fine. The probe now mirrors the real
+  listener; an actively listening socket still fails it, so real conflicts are caught.
+
 ## [0.6.3] — 2026-11-19
 
 ### Fixed

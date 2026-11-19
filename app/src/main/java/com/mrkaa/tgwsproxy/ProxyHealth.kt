@@ -33,11 +33,18 @@ object ProxyHealth {
      * listens on it), false = something already owns it (stale proxy instance,
      * another app) — better to tell the user before the Python core fails to bind.
      * Bind-and-release on 127.0.0.1 only; call off the main thread.
+     *
+     * reuseAddress mirrors the real listener (Python asyncio sets SO_REUSEADDR on
+     * POSIX): without it the probe is stricter than what it predicts — TIME_WAIT
+     * leftovers from the previous run's connections (e.g. a burst of rejected
+     * handshakes) made a quick Stop→Start report the port busy for ~a minute
+     * while the Python core would have bound fine. An actively LISTENING socket
+     * still fails the bind, so real conflicts are caught.
      */
     fun portFree(port: Int = Const.PORT): Boolean =
         try {
             ServerSocket().use { ss ->
-                ss.reuseAddress = false
+                ss.reuseAddress = true
                 ss.bind(InetSocketAddress(Const.HOST, port), 1)
                 true
             }
